@@ -3,14 +3,16 @@ import sqlite3
 app= Flask(__name__)
 
 app.secret_key = "123"
+
+
 @app.route("/", methods = ['GET' , 'POST'])
 def home():
     msg= None
     if(request.method == "POST"):
-       if(request.form["name"] !="" and request.form["username"] !="" and request.form["password"] !=""):
-           username = request.form["username"]
-           name = request.form["name"]
-           password = request.form["password"]
+       if(request.form.get("name") !="" and request.form.get("username") !="" and request.form.get("password") !=""):
+           username = request.form.get("username")
+           name = request.form.get("name")
+           password = request.form.get("password")
            conn= sqlite3.connect("signup.db")
            c = conn.cursor()
            print(username,name,password)
@@ -31,17 +33,14 @@ def login():
     msg = ''
     msg2=''
     if(request.method == "POST"):
-         name = request.form["nm"]
+         name = request.form.get("nm")
          if( name =="" ):
              msg = "please enter username"
-             print(name)
          else :
              conn= sqlite3.connect("signup.db")
              c = conn.cursor()
-             print(name)
              c.execute("SELECT * FROM db1 WHERE username = '"+name+"' ")
              r = c.fetchall()
-             print(r)
          if r=='':
              msg='User not found'
          else:
@@ -57,7 +56,7 @@ def home1():
     msg = ''
     
     if(request.method == "POST"):
-         name = request.form["nm"]
+         name = request.form.get("nm")
          if( name =="" ):
              msg = "please enter username"
              print(name)
@@ -87,8 +86,8 @@ def update():
       uname=''
       name=''
       if(request.method == "POST"):
-         uname = request.form["nm"]
-         name = request.form["name"]
+         uname = request.form.get("nm")
+         name = request.form.get("name")
          print(uname , name)
          if( uname =="" ):
              msg = "please enter username"
