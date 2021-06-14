@@ -1,7 +1,7 @@
 from flask import Flask, render_template,request,redirect,session,url_for
 import sqlite3
 app= Flask(__name__)
-
+#hello this is change
 app.secret_key = "123"
 @app.route("/", methods = ['GET' , 'POST'])
 def home():
