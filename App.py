@@ -3,7 +3,7 @@ import sqlite3
 app= Flask(__name__)
 
 app.secret_key = "123"
-
+conn= sqlite3.connect("signup.db",check_same_thread=False)
 
 @app.route("/", methods = ['GET' , 'POST'])
 def home():
@@ -13,14 +13,10 @@ def home():
            username = request.form.get("username")
            name = request.form.get("name")
            password = request.form.get("password")
-           conn= sqlite3.connect("signup.db")
            c = conn.cursor()
-           print(username,name,password)
-           c.execute("INSERT INTO db1 VALUES ('"+name+"','"+username+"','"+password+"')")
-           
+           params=(username,name,password)
+           c.execute("INSERT INTO db1 VALUES (?,?,?)",params)
            conn.commit()
-           conn.close()
-        
        else :
            msg = 'Please add all the fields'
            
@@ -37,9 +33,10 @@ def login():
          if( name =="" ):
              msg = "please enter username"
          else :
-             conn= sqlite3.connect("signup.db")
+             params=(name,)
              c = conn.cursor()
-             c.execute("SELECT * FROM db1 WHERE username = '"+name+"' ")
+             c.execute("SELECT * FROM db1 WHERE username = ?",params)
+             #c.execute("select * from db1 WHERE username=?".format(name))
              r = c.fetchall()
          if r=='':
              msg='User not found'
@@ -61,9 +58,9 @@ def home1():
              msg = "please enter username"
              print(name)
          else :
-             conn= sqlite3.connect("signup.db")
              c = conn.cursor()
-             c.execute("SELECT * FROM db1 WHERE username = '"+name+"' ")
+             params=(name,)
+             c.execute("SELECT * FROM db1 WHERE username = ?",params)
              r = c.fetchall()
              print('checking user ')
          if r=='':
@@ -72,9 +69,9 @@ def home1():
              conn= sqlite3.connect("signup.db")
              c = conn.cursor()
              print('deleting data')
-             c.execute("DELETE FROM db1 WHERE username = '"+name+"' ")
+             params=(name,)
+             c.execute("DELETE FROM db1 WHERE username = ?",params)
              conn.commit()
-             conn.close()
              msg='User data successfully deleted'
              
     return render_template("delete.html",msg=msg)
@@ -92,12 +89,11 @@ def update():
          if( uname =="" ):
              msg = "please enter username"
          else:
-             conn= sqlite3.connect("signup.db")
              c = conn.cursor()
              print('update data')
-             c.execute("UPDATE db1 SET name = '"+name+"' WHERE username = '"+uname+"' ")
+             params=(name,uname)
+             c.execute("UPDATE db1 SET name = ? WHERE username = ?",params)
              conn.commit()
-             conn.close()
              msg='User data successfully updated' 
           
       return render_template("update.html",msg=msg)
